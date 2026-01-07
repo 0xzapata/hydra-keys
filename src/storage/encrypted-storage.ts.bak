@@ -1,0 +1,187 @@
+import crypto from "crypto";
+import fs from "fs/promises";
+import path from "path";
+import os from "os";
+import inquirer from "inquirer";
+
+const STORAGE_FILE = path.join(os.homedir(), ".hydra-keys", "keys.enc");
+const IV_LENGTH = 16;
+const SALT_LENGTH = 64;
+const KEY_ITERATIONS = 100000;
+const KEY_LENGTH = 32;
+
+export class EncryptedStorage {
+  private password: string = "";
+
+  async getPassword(): Promise<string> {
+    if (this.password) {
+      return this.password;
+    }
+
+    const answers = await inquirer.prompt([
+      {
+        type: "password",
+        name: "password",
+        message: "Enter encryption password:",
+        mask: "*",
+      },
+      {
+        type: "password",
+        name: "confirm",
+        message: "Confirm password:",
+        mask: "*",
+      },
+    ]);
+
+    if (answers.password !== answers.confirm) {
+      throw new Error("Passwords do not match.");
+    }
+
+    if ((answers.password as string).length < 8) {
+      throw new Error("Password must be at least 8 characters.");
+    }
+
+    this.password = answers.password;
+    return this.password;
+  }
+
+  async store(key: string, value: string): Promise<void> {
+    const password = await this.getPassword();
+    const data = await this.readEncryptedData();
+
+    data[key] = await this._encryptData(value, password);
+
+    await this.writeEncryptedData(data);
+  }
+
+  async retrieve(key: string): Promise<string | null> {
+    const password = await this.getPassword();
+    const data = await this.readEncryptedData();
+
+    if (!data[key]) {
+      return null;
+    }
+
+    try {
+      return await this.decrypt(data[key], password);
+    } catch {
+      throw new Error("Failed to decrypt. Wrong password?");
+    }
+  }
+
+  async delete(key: string): Promise<void> {
+    const password = await this.getPassword();
+    const data = await this.readEncryptedData();
+
+    delete data[key];
+
+    await this.writeEncryptedData(data);
+  }
+
+  async list(): Promise<string[]> {
+    const data = await this.readEncryptedData();
+    return Object.keys(data);
+  }
+
+  private async _encryptData(text: string, password: string): Promise<string> {
+    const salt = Buffer.from(crypto.randomBytes(SALT_LENGTH));
+    const keyBuffer = crypto.pbkdf2Sync(password as string, salt, {
+      iterations: KEY_ITERATIONS,
+      keyLength: KEY_LENGTH,
+      digest: "sha256",
+    });
+    const key = keyBuffer.toString("hex");
+    const iv = crypto.randomBytes(IV_LENGTH);
+    const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
+
+    let encrypted = cipher.update(text, "utf8", "hex");
+    encrypted += cipher.final("hex");
+
+    const authTag = cipher.getAuthTag();
+
+    const result = {
+      salt: salt.toString("hex"),
+      iv: iv.toString("hex"),
+      encrypted,
+      authTag: authTag.toString("hex"),
+    };
+
+    return JSON.stringify(result);
+  }
+
+  private async decrypt(
+    encryptedData: string,
+    password: string,
+  ): Promise<string> {
+    const data = JSON.parse(encryptedData);
+    const salt = Buffer.from(data.salt, "hex");
+    const iv = Buffer.from(data.iv, "hex");
+    const authTag = Buffer.from(data.authTag, "hex");
+    const keyBuffer = crypto.pbkdf2Sync(password as string, salt, {
+      iterations: KEY_ITERATIONS,
+      keyLength: KEY_LENGTH,
+      digest: "sha256",
+    });
+    const key = keyBuffer.toString("hex");
+    const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+    decipher.setAuthTag(authTag);
+
+    let decrypted = decipher.update(data.encrypted, "hex", "utf8");
+    decrypted += decipher.final("utf8");
+
+    return decrypted;
+  }
+
+  private async decrypt(
+    encryptedData: string,
+    password: string,
+  ): Promise<string> {
+    const data = JSON.parse(encryptedData);
+    const salt = Buffer.from(data.salt, "hex");
+    const iv = Buffer.from(data.iv, "hex");
+    const authTag = Buffer.from(data.authTag, "hex");
+    const keyBuffer = crypto.pbkdf2Sync(password as string, salt, {
+      iterations: KEY_ITERATIONS,
+      keyLength: KEY_LENGTH,
+      digest: "sha256",
+    });
+    const key = keyBuffer.toString("hex");
+    const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+    decipher.setAuthTag(authTag);
+
+    let decrypted = decipher.update(data.encrypted, "hex", "utf8");
+    decrypted += decipher.final("utf8");
+
+    return decrypted;
+  }
+
+  private async readEncryptedData(): Promise<Record<string, string>> {
+    try {
+      const content = await fs.readFile(STORAGE_FILE, "utf8");
+      return JSON.parse(content);
+    } catch (error: any) {
+      if (error.code === "ENOENT") {
+        return {};
+      }
+      throw error;
+    }
+  }
+
+  private async writeEncryptedData(
+    data: Record<string, string>,
+  ): Promise<void> {
+    const dir = path.dirname(STORAGE_FILE);
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(STORAGE_FILE, JSON.stringify(data, null, 2));
+  }
+
+  async clear(): Promise<void> {
+    try {
+      await fs.unlink(STORAGE_FILE);
+    } catch (error: any) {
+      if (error.code !== "ENOENT") {
+        throw error;
+      }
+    }
+  }
+}

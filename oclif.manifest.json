@@ -1,0 +1,538 @@
+{
+  "commands": {
+    "init": {
+      "aliases": [],
+      "args": {},
+      "description": "Initialize hydra-keys configuration",
+      "examples": [
+        "$ hydra-keys init\nStart interactive setup\n"
+      ],
+      "flags": {
+        "force": {
+          "char": "f",
+          "description": "Force reinitialize (overwrites existing config)",
+          "name": "force",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "init",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "init.js"
+      ]
+    },
+    "config:get": {
+      "aliases": [],
+      "args": {
+        "key": {
+          "description": "Config key (dot notation)",
+          "name": "key",
+          "required": true
+        }
+      },
+      "description": "Get a config value",
+      "examples": [
+        "$ hydra-keys config get storage.backend",
+        "$ hydra-keys config get defaults.provider"
+      ],
+      "flags": {},
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "config:get",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "config",
+        "get.js"
+      ]
+    },
+    "config:set": {
+      "aliases": [],
+      "args": {
+        "key": {
+          "description": "Config key (dot notation)",
+          "name": "key",
+          "required": true
+        },
+        "value": {
+          "description": "Value to set",
+          "name": "value",
+          "required": true
+        }
+      },
+      "description": "Set a config value",
+      "examples": [
+        "$ hydra-keys config set storage.backend encrypted-file",
+        "$ hydra-keys config set defaults.provider openrouter"
+      ],
+      "flags": {},
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "config:set",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "config",
+        "set.js"
+      ]
+    },
+    "config:show": {
+      "aliases": [],
+      "args": {},
+      "description": "Show all configuration",
+      "examples": [
+        "$ hydra-keys config show"
+      ],
+      "flags": {},
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "config:show",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "config",
+        "show.js"
+      ]
+    },
+    "provider:add": {
+      "aliases": [],
+      "args": {
+        "provider": {
+          "description": "Provider name",
+          "name": "provider",
+          "required": true
+        }
+      },
+      "description": "Configure a new provider",
+      "examples": [
+        "$ hydra-keys provider add openrouter",
+        "$ hydra-keys provider add convex"
+      ],
+      "flags": {},
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "provider:add",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "provider",
+        "add.js"
+      ]
+    },
+    "provider": {
+      "aliases": [],
+      "args": {},
+      "description": "List available providers",
+      "examples": [
+        "$ hydra-keys provider list"
+      ],
+      "flags": {
+        "status": {
+          "char": "s",
+          "description": "Show configuration status for each provider",
+          "name": "status",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "provider",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "provider",
+        "index.js"
+      ]
+    },
+    "provider:remove": {
+      "aliases": [],
+      "args": {
+        "provider": {
+          "description": "Provider name",
+          "name": "provider",
+          "required": true
+        }
+      },
+      "description": "Remove a provider configuration",
+      "examples": [
+        "$ hydra-keys provider remove openrouter"
+      ],
+      "flags": {},
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "provider:remove",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "provider",
+        "remove.js"
+      ]
+    },
+    "key:create": {
+      "aliases": [],
+      "args": {
+        "provider": {
+          "description": "Provider name",
+          "name": "provider",
+          "required": true
+        }
+      },
+      "description": "Create a new API key",
+      "examples": [
+        "$ hydra-keys key create openrouter --name \"Production\"",
+        "$ hydra-keys key create openrouter --name \"Dev\" --limit 100 --reset monthly"
+      ],
+      "flags": {
+        "name": {
+          "char": "n",
+          "description": "Key name",
+          "name": "name",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "limit": {
+          "char": "l",
+          "description": "Spending/usage limit",
+          "name": "limit",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "reset": {
+          "char": "r",
+          "description": "Limit reset period (daily|weekly|monthly)",
+          "name": "reset",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "expires": {
+          "char": "e",
+          "description": "Expiration date (ISO 8601)",
+          "name": "expires",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "output": {
+          "char": "o",
+          "description": "Save key to file",
+          "name": "output",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "key:create",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "key",
+        "create.js"
+      ]
+    },
+    "key:delete": {
+      "aliases": [],
+      "args": {
+        "provider": {
+          "description": "Provider name",
+          "name": "provider",
+          "required": true
+        },
+        "keyId": {
+          "description": "Key ID to delete",
+          "name": "keyId",
+          "required": true
+        }
+      },
+      "description": "Delete an API key",
+      "examples": [
+        "$ hydra-keys key delete openrouter sk-or-123456"
+      ],
+      "flags": {},
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "key:delete",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "key",
+        "delete.js"
+      ]
+    },
+    "key:export": {
+      "aliases": [],
+      "args": {
+        "provider": {
+          "description": "Provider name",
+          "name": "provider",
+          "required": true
+        }
+      },
+      "description": "Export keys to JSON",
+      "examples": [
+        "$ hydra-keys key export openrouter",
+        "$ hydra-keys key export openrouter --output ./keys.json"
+      ],
+      "flags": {
+        "output": {
+          "char": "o",
+          "description": "Output file path",
+          "name": "output",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "key:export",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "key",
+        "export.js"
+      ]
+    },
+    "key": {
+      "aliases": [],
+      "args": {
+        "provider": {
+          "description": "Provider name",
+          "name": "provider",
+          "required": true
+        }
+      },
+      "description": "List keys for a provider",
+      "examples": [
+        "$ hydra-keys key list openrouter",
+        "$ hydra-keys key list convex"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "key",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "key",
+        "index.js"
+      ]
+    },
+    "storage:migrate": {
+      "aliases": [],
+      "args": {},
+      "description": "Migrate between storage backends",
+      "examples": [
+        "$ hydra-keys storage migrate"
+      ],
+      "flags": {},
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "storage:migrate",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "storage",
+        "migrate.js"
+      ]
+    },
+    "storage:status": {
+      "aliases": [],
+      "args": {},
+      "description": "Show storage status",
+      "examples": [
+        "$ hydra-keys storage status"
+      ],
+      "flags": {},
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "storage:status",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "storage",
+        "status.js"
+      ]
+    },
+    "plugin": {
+      "aliases": [],
+      "args": {},
+      "description": "List installed plugins",
+      "examples": [
+        "$ hydra-keys plugin list"
+      ],
+      "flags": {},
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "plugin",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "plugin",
+        "index.js"
+      ]
+    },
+    "plugin:install": {
+      "aliases": [],
+      "args": {
+        "package": {
+          "description": "NPM package name",
+          "name": "package",
+          "required": true
+        }
+      },
+      "description": "Install a plugin package",
+      "examples": [
+        "$ hydra-keys plugin install hydra-keys-provider-anthropic",
+        "$ hydra-keys plugin install hydra-keys-provider-anthropic@latest"
+      ],
+      "flags": {},
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "plugin:install",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "plugin",
+        "install.js"
+      ]
+    },
+    "plugin:uninstall": {
+      "aliases": [],
+      "args": {
+        "package": {
+          "description": "NPM package name",
+          "name": "package",
+          "required": true
+        }
+      },
+      "description": "Uninstall a plugin package",
+      "examples": [
+        "$ hydra-keys plugin uninstall hydra-keys-provider-anthropic"
+      ],
+      "flags": {},
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "plugin:uninstall",
+      "pluginAlias": "hydra-keys",
+      "pluginName": "hydra-keys",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": false,
+      "relativePath": [
+        "dist",
+        "commands",
+        "plugin",
+        "uninstall.js"
+      ]
+    }
+  },
+  "version": "0.1.0"
+}

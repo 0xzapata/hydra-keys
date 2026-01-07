@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+
+const { run, flush } = require('@oclif/core');
+
+run(process.argv.slice(2), __dirname)
+  .then(flush)
+  .catch(require('@oclif/core').Errors.handle);
