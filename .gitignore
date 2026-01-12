@@ -27,3 +27,8 @@ Thumbs.db
 
 # User config
 .hydra-keys/
+
+# Test artifacts
+test/**/*.js
+test/**/*.d.ts
+test/**/*.map
