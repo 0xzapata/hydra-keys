@@ -8,6 +8,8 @@ import {
 } from "./base";
 import { loadProviderConfig } from "./helper";
 
+const API_BASE_URL = "https://api.convex.dev/v1";
+
 export const convexProvider: Provider = {
   name: "convex",
   displayName: "Convex",
@@ -17,7 +19,7 @@ export const convexProvider: Provider = {
   async createKey(options: CreateKeyOptions): Promise<KeyResult> {
     const config = await loadProviderConfig("convex");
     const response = await axios.post(
-      `https://api.convex.dev/v1/deployments/${config.projectId}/create_deploy_key`,
+      `${API_BASE_URL}/deployments/${config.projectId}/create_deploy_key`,
       {},
       {
         headers: {
@@ -37,7 +39,7 @@ export const convexProvider: Provider = {
 
   async listKeys(): Promise<KeyResult[]> {
     const config = await loadProviderConfig("convex");
-    const response = await axios.get(`https://api.convex.dev/v1/deployments`, {
+    const response = await axios.get(`${API_BASE_URL}/deployments`, {
       headers: {
         Authorization: `Convex ${config.serviceKey}`,
       },
@@ -59,7 +61,7 @@ export const convexProvider: Provider = {
 
   async validateConfig(config: ProviderConfig): Promise<ValidationResult> {
     try {
-      const response = await axios.get("https://api.convex.dev/v1/projects", {
+      const response = await axios.get(`${API_BASE_URL}/projects`, {
         headers: {
           Authorization: `Convex ${config.serviceKey}`,
         },
