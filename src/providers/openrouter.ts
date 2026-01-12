@@ -8,6 +8,8 @@ import {
 } from "./base";
 import { loadProviderConfig } from "./helper";
 
+const API_BASE_URL = "https://openrouter.ai/api/v1";
+
 export const openrouterProvider: Provider = {
   name: "openrouter",
   displayName: "OpenRouter",
@@ -17,7 +19,7 @@ export const openrouterProvider: Provider = {
   async createKey(options: CreateKeyOptions): Promise<KeyResult> {
     const config = await loadProviderConfig("openrouter");
     const response = await axios.post(
-      "https://openrouter.ai/api/v1/keys",
+      `${API_BASE_URL}/keys`,
       {
         name: options.name,
         limit: options.limit,
@@ -46,7 +48,7 @@ export const openrouterProvider: Provider = {
 
   async listKeys(): Promise<KeyResult[]> {
     const config = await loadProviderConfig("openrouter");
-    const response = await axios.get("https://openrouter.ai/api/v1/keys", {
+    const response = await axios.get(`${API_BASE_URL}/keys`, {
       headers: {
         Authorization: `Bearer ${config.serviceKey}`,
       },
@@ -65,7 +67,7 @@ export const openrouterProvider: Provider = {
 
   async deleteKey(keyId: string): Promise<void> {
     const config = await loadProviderConfig("openrouter");
-    await axios.delete(`https://openrouter.ai/api/v1/keys/${keyId}`, {
+    await axios.delete(`${API_BASE_URL}/keys/${keyId}`, {
       headers: {
         Authorization: `Bearer ${config.serviceKey}`,
       },
@@ -74,15 +76,12 @@ export const openrouterProvider: Provider = {
 
   async validateConfig(config: ProviderConfig): Promise<ValidationResult> {
     try {
-      const response = await axios.get(
-        "https://openrouter.ai/api/v1/auth/key",
-        {
-          headers: {
-            Authorization: `Bearer ${config.serviceKey}`,
-          },
-          timeout: 5000,
+      const response = await axios.get(`${API_BASE_URL}/auth/key`, {
+        headers: {
+          Authorization: `Bearer ${config.serviceKey}`,
         },
-      );
+        timeout: 5000,
+      });
       return { valid: true };
     } catch (error: any) {
       return {

@@ -1,9 +1,54 @@
 import { Command, Args, Flags } from "@oclif/core";
+import { z } from "zod";
 import inquirer from "inquirer";
 import chalk from "chalk";
 import fs from "fs/promises";
 import { pluginSystem } from "../../core/plugin-system";
 import { CreateKeyOptions } from "../../providers/base";
+
+const FlagsSchema = z.object({
+  name: z.string().optional(),
+  limit: z
+    .string()
+    .optional()
+    .transform((val, ctx) => {
+      if (val === undefined) return undefined;
+      const parsed = parseFloat(val);
+      if (isNaN(parsed) || parsed <= 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Limit must be a positive number",
+        });
+        return z.NEVER;
+      }
+      return parsed;
+    }),
+  reset: z
+    .enum(["daily", "weekly", "monthly"], {
+      errorMap: () => ({
+        message: "Limit reset period must be one of: daily, weekly, monthly",
+      }),
+    })
+    .optional(),
+  expires: z
+    .string()
+    .optional()
+    .transform((val, ctx) => {
+      if (val === undefined) return undefined;
+      const date = new Date(val);
+      if (isNaN(date.getTime())) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid date format. Use ISO 8601 (e.g., 2025-12-31).",
+        });
+        return z.NEVER;
+      }
+      return date;
+    }),
+  output: z.string().optional(),
+});
+
+type ValidatedFlags = z.infer<typeof FlagsSchema>;
 
 export default class KeyCreate extends Command {
   static description = "Create a new API key";
@@ -44,8 +89,20 @@ export default class KeyCreate extends Command {
   };
 
   async run(): Promise<void> {
-    const { args, flags } = await this.parse(KeyCreate);
+    const { args, flags: rawFlags } = await this.parse(KeyCreate);
     const { provider: providerName } = args;
+
+    const validationResult = FlagsSchema.safeParse(rawFlags);
+
+    if (!validationResult.success) {
+      const errorMessages = validationResult.error.issues
+        .map((issue) => ` - ${issue.message}`)
+        .join("\n");
+      this.error(chalk.red(`Invalid flags provided:\n${errorMessages}`));
+      return;
+    }
+
+    const flags = validationResult.data;
 
     const provider = pluginSystem.get(providerName);
 
@@ -85,13 +142,15 @@ export default class KeyCreate extends Command {
     }
   }
 
-  private async getCreateOptions(flags: any): Promise<CreateKeyOptions> {
+  private async getCreateOptions(
+    flags: ValidatedFlags,
+  ): Promise<CreateKeyOptions> {
     if (flags.name) {
       return {
         name: flags.name,
-        limit: flags.limit ? parseFloat(flags.limit) : undefined,
+        limit: flags.limit,
         limitReset: flags.reset as "daily" | "weekly" | "monthly" | undefined,
-        expiresAt: flags.expires ? new Date(flags.expires) : undefined,
+        expiresAt: flags.expires,
       };
     }
 

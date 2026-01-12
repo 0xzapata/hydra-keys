@@ -1,6 +1,7 @@
 import { Provider } from "../providers/base";
 import { openrouterProvider } from "../providers/openrouter";
 import { convexProvider } from "../providers/convex";
+import { neonProvider } from "../providers/neon";
 
 class PluginSystem {
   private providers = new Map<string, Provider>();
@@ -19,6 +20,9 @@ class PluginSystem {
     }
     if (!this.providers.has(convexProvider.name)) {
       this.providers.set(convexProvider.name, convexProvider);
+    }
+    if (!this.providers.has(neonProvider.name)) {
+      this.providers.set(neonProvider.name, neonProvider);
     }
   }
 
